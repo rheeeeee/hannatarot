@@ -12,98 +12,112 @@
   <meta name="twitter:card" content="summary_large_image">
 
   <style>
-    body {
-      font-family: sans-serif;
-      background-color: #fffaf3;
-      text-align: center;
-      padding: 40px;
-    }
-    .card-list {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 15px;
-    }
-    .card {
-      width: 100px;
-      height: auto;
-      cursor: pointer;
-      border: 2px solid transparent;
-      transition: transform 0.2s, border 0.2s;
-    }
-    .card:hover {
-      transform: scale(1.05);
-      border: 2px solid #e0b9ff;
-    }
-    #meaningBox {
-      margin-top: 30px;
-      font-size: 15px;
-      background-color: #ffffff;
-      padding: 30px;
-      display: block;
-      border-radius: 15px;
-      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-      width: 770px;
-      min-height: 200px;
-      margin-left: auto;
-      margin-right: auto;
-      text-align: center;
-      line-height: 1.7;
-    }
-    .controls {
-      margin-bottom: 30px;
-    }
-    .controls button {
-      margin: 0 10px;
-      padding: 10px 20px;
-      border: none;
-      background-color: #e0b9ff;
-      color: #fff;
-      border-radius: 10px;
-      cursor: pointer;
-    }
-    .controls button:hover {
-      background-color: #c995f5;
-    }
+  body {
+  font-family: sans-serif;
+  background-color: #fffaf3;
+  text-align: center;
+  padding: 40px;
+}
+.card-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 15px;
+}
+.card {
+  width: 100px;
+  height: auto;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: transform 0.2s, border 0.2s;
+}
+.card:hover {
+  transform: scale(1.05);
+  border: 2px solid #e0b9ff;
+}
+#meaningBox {
+  margin-top: 30px;
+  font-size: 15px;
+  background-color: #ffffff;
+  padding: 30px;
+  display: block;
+  border-radius: 15px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+  width: 770px;
+  min-height: 200px;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+  line-height: 1.7;
+}
+.controls {
+  margin-bottom: 30px;
+}
+.controls button {
+  margin: 0 10px;
+  padding: 10px 20px;
+  border: none;
+  background-color: #e0b9ff;
+  color: #fff;
+  border-radius: 10px;
+  cursor: pointer;
+}
+.controls button:hover {
+  background-color: #c995f5;
+}
 
-  /* 📱 모바일 반응형 처리 */
-  @media (max-width: 600px) {
-    .card {
-      width: 80px;
-    }
+    /* 반짝반짝 효과 및 오늘의 카드 스타일 */
+.today-card {
+ transform: scale(3);
+  z-index: 1000;
+  position: relative;
+  transition: transform 0.5s ease, opacity 0.5s ease;
+  opacity: 0;
+  animation: fadeIn 0.5s forwards;
+}
 
-    #meaningBox {
-      width: 90%;
-      padding: 20px;
-      font-size: 14px;
-    }
+.sparkle {
+  position: fixed;
+  width: 8px;
+  height: 8px;
+  background: radial-gradient(white, transparent);
+  border-radius: 50%;
+  pointer-events: none;
+  animation: fall 1.5s linear forwards;
+}
 
-    .controls button {
-      padding: 8px 12px;
-      font-size: 14px;
-    }
-
-    h1 {
-      font-size: 20px;
-    }
-
-    body {
-      padding: 20px;
-    }
+@keyframes fadeIn {
+  to {
+    opacity: 1;
   }
-  /* 반짝반짝 효과 */
-  @keyframes sparkle {
-    0% { box-shadow: 0 0 5px #fff3f3; }
-    50% { box-shadow: 0 0 20px #ffcaff, 0 0 30px #ffd6f6; }
-    100% { box-shadow: 0 0 5px #fff3f3; }
-  }
-
-  .today-card {
-    animation: sparkle 1.5s infinite;
-    border: 2px solid #e0b9ff;
-    border-radius: 10px;
-  }
+}
     
+/* 📱 모바일 반응형 처리 */
+@media (max-width: 600px) {
+  .today-card {
+    transform: scale(1.8);
+  }
+
+  #meaningBox {
+    width: 90%;
+    padding: 20px;
+    font-size: 14px;
+  }
+
+  .controls button {
+    padding: 8px 12px;
+    font-size: 14px;
+  }
+
+  h1 {
+    font-size: 20px;
+  }
+
+  body {
+    padding: 20px;
+  }
+}
+
   </style>
 </head>
 <body>
@@ -211,12 +225,24 @@
       const cardList = document.getElementById("cardList");
       const meaningBox = document.getElementById("meaningBox");
 
+      // 카드 출력 (3배 확대용 클래스 추가)
       cardList.innerHTML = `<img src="${card.img}" alt="${card.name}" class="card today-card">`;
 
       meaningBox.innerHTML = `
         <p style="font-weight: bold; font-size: 16px; color: #d36bff;">오늘의 카드입니다 💖</p>
         <strong>${card.name}</strong><br>${card.meaning}
       `;
+
+      // 반짝이 애니메이션 추가
+      for (let i = 0; i < 30; i++) {
+        const sparkle = document.createElement('div');
+        sparkle.classList.add('sparkle');
+        sparkle.style.left = Math.random() * window.innerWidth + 'px';
+        sparkle.style.top = '-10px';
+        sparkle.style.animationDelay = Math.random() + 's';
+        document.body.appendChild(sparkle);
+        setTimeout(() => sparkle.remove(), 1500);
+      }
     })
     .catch(error => {
       console.error("오늘의 카드 로딩 실패:", error);
