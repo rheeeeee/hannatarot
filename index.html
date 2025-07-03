@@ -10,7 +10,7 @@
   <meta property="og:image" content="https://rheeeeee.github.io/hannatarot/images/banner.png">
   <meta property="og:url" content="https://rheeeeee.github.io/hannatarot/">
   <meta name="twitter:card" content="summary_large_image">
-  </head>
+
   <style>
     body {
       font-family: sans-serif;
@@ -64,42 +64,57 @@
     }
     .controls button:hover {
       background-color: #c995f5;
-}
-      @media (max-width: 600px) {
-  .card {
-    width: 80px;
-  }
-
-  #meaningBox {
-    width: 90%;
-    padding: 20px;
-    font-size: 14px;
-  }
-
-  .controls button {
-    padding: 8px 12px;
-    font-size: 14px;
-  }
-
-  h1 {
-    font-size: 20px;
-  }
-
-  body {
-    padding: 20px;
-}
     }
+
+  /* 📱 모바일 반응형 처리 */
+  @media (max-width: 600px) {
+    .card {
+      width: 80px;
+    }
+
+    #meaningBox {
+      width: 90%;
+      padding: 20px;
+      font-size: 14px;
+    }
+
+    .controls button {
+      padding: 8px 12px;
+      font-size: 14px;
+    }
+
+    h1 {
+      font-size: 20px;
+    }
+
+    body {
+      padding: 20px;
+    }
+  }
+  /* 반짝반짝 효과 */
+  @keyframes sparkle {
+    0% { box-shadow: 0 0 5px #fff3f3; }
+    50% { box-shadow: 0 0 20px #ffcaff, 0 0 30px #ffd6f6; }
+    100% { box-shadow: 0 0 5px #fff3f3; }
+  }
+
+  .today-card {
+    animation: sparkle 1.5s infinite;
+    border: 2px solid #e0b9ff;
+    border-radius: 10px;
+  }
     
   </style>
 </head>
 <body>
   <h1>🔮 Hanna's Tarot Deck</h1>
   <div class="controls">
-    <button onclick="showMajor()">🔮 Major</button>
+  <button onclick="showMajor()">🔮 Major</button>
   <button onclick="showCups()">💧 Cups</button>
   <button onclick="showSwords()">🗡️ Swords</button>
   <button onclick="showWands()">🪵 Wands</button>
   <button onclick="showPents()">🪙 Pentacles</button>
+  <button onclick="drawTodayCard()">🌟 오늘의 카드</button>
   </div>
   <div class="card-list" id="cardList"></div>
   <div id="meaningBox">카드를 클릭하면 해석이 여기에 나와요 ✨</div>
@@ -133,8 +148,8 @@
   }
 
   function showMajor() {
-    const majors = majorCards.filter(card => card.type === "Major");
-    showCards(majors);
+  const majors = majorCards.filter(card => card.type === "Major");
+  showCards(majors);
   }
 
   function showCups() {
@@ -185,4 +200,27 @@
   document.addEventListener("DOMContentLoaded", () => {
     showMajor();
   });
+  function drawTodayCard() {
+  fetch("cards.json")
+    .then(res => res.json())
+    .then(cards => {
+      const majorCardsOnly = cards.filter(card => card.type === "Major");
+      const randomIndex = Math.floor(Math.random() * majorCardsOnly.length);
+      const card = majorCardsOnly[randomIndex];
+
+      const cardList = document.getElementById("cardList");
+      const meaningBox = document.getElementById("meaningBox");
+
+      cardList.innerHTML = `<img src="${card.img}" alt="${card.name}" class="card today-card">`;
+
+      meaningBox.innerHTML = `
+        <p style="font-weight: bold; font-size: 16px; color: #d36bff;">오늘의 카드입니다 💖</p>
+        <strong>${card.name}</strong><br>${card.meaning}
+      `;
+    })
+    .catch(error => {
+      console.error("오늘의 카드 로딩 실패:", error);
+    });
+}
+   
 </script>
