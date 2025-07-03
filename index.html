@@ -214,7 +214,7 @@
   document.addEventListener("DOMContentLoaded", () => {
     showMajor();
   });
-  function drawTodayCard() {
+function drawTodayCard() {
   fetch("cards.json")
     .then(res => res.json())
     .then(cards => {
@@ -225,15 +225,26 @@
       const cardList = document.getElementById("cardList");
       const meaningBox = document.getElementById("meaningBox");
 
-      // 카드 출력 (3배 확대용 클래스 추가)
-      cardList.innerHTML = `<img src="${card.img}" alt="${card.name}" class="card today-card">`;
+      // 이미지 객체 생성
+      const img = document.createElement("img");
+      img.src = card.img;
+      img.alt = card.name;
+      img.className = "card"; // 일단 today-card 제외
+
+      // 이미지가 로드된 후에 today-card 클래스 추가 (애니메이션 트리거)
+      img.onload = () => {
+        img.classList.add("today-card");
+      };
+
+      cardList.innerHTML = ""; // 기존 카드 제거
+      cardList.appendChild(img);
 
       meaningBox.innerHTML = `
         <p style="font-weight: bold; font-size: 16px; color: #d36bff;">오늘의 카드입니다 💖</p>
         <strong>${card.name}</strong><br>${card.meaning}
       `;
 
-      // 반짝이 애니메이션 추가
+      // 반짝이 효과
       for (let i = 0; i < 30; i++) {
         const sparkle = document.createElement('div');
         sparkle.classList.add('sparkle');
@@ -248,5 +259,6 @@
       console.error("오늘의 카드 로딩 실패:", error);
     });
 }
+
    
 </script>
