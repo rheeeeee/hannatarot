@@ -68,35 +68,30 @@
 
     /* 반짝반짝 효과 및 오늘의 카드 스타일 */
 .today-card {
- transform: scale(3);
   z-index: 1000;
   position: relative;
-  transition: transform 0.5s ease, opacity 0.5s ease;
   opacity: 0;
-  animation: fadeIn 0.5s forwards;
+  animation: popIn 0.8s cubic-bezier(0.3, 1.6, 0.4, 1) forwards;
 }
 
-.sparkle {
-  position: fixed;
-  width: 8px;
-  height: 8px;
-  background: radial-gradient(white, transparent);
-  border-radius: 50%;
-  pointer-events: none;
-  animation: fall 1.5s linear forwards;
-}
-
-@keyframes fadeIn {
-  to {
+@keyframes popIn {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.4);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
     opacity: 1;
   }
 }
     
 /* 📱 모바일 반응형 처리 */
 @media (max-width: 600px) {
-  .today-card {
-    transform: scale(1.8);
-  }
+  /* .today-card transform 제거! */
 
   #meaningBox {
     width: 90%;
@@ -215,6 +210,19 @@
     showMajor();
   });
 function drawTodayCard() {
+  const todayKey = new Date().toISOString().slice(0, 10); // "2025-07-03" 같은 날짜 키
+  const stored = localStorage.getItem("todayCard");
+
+  if (stored) {
+    const saved = JSON.parse(stored);
+    if (saved.date === todayKey) {
+      // 오늘 날짜와 같으면 저장된 카드 보여주기
+      displayTodayCard(saved.card);
+      return;
+    }
+  }
+
+  // 새로운 카드 뽑기
   fetch("cards.json")
     .then(res => res.json())
     .then(cards => {
@@ -222,43 +230,49 @@ function drawTodayCard() {
       const randomIndex = Math.floor(Math.random() * majorCardsOnly.length);
       const card = majorCardsOnly[randomIndex];
 
-      const cardList = document.getElementById("cardList");
-      const meaningBox = document.getElementById("meaningBox");
+      // 저장
+      localStorage.setItem("todayCard", JSON.stringify({
+        date: todayKey,
+        card: card
+      }));
 
-      // 이미지 객체 생성
-      const img = document.createElement("img");
-      img.src = card.img;
-      img.alt = card.name;
-      img.className = "card"; // 일단 today-card 제외
-
-      // 이미지가 로드된 후에 today-card 클래스 추가 (애니메이션 트리거)
-      img.onload = () => {
-        img.classList.add("today-card");
-      };
-
-      cardList.innerHTML = ""; // 기존 카드 제거
-      cardList.appendChild(img);
-
-      meaningBox.innerHTML = `
-        <p style="font-weight: bold; font-size: 16px; color: #d36bff;">오늘의 카드입니다 💖</p>
-        <strong>${card.name}</strong><br>${card.meaning}
-      `;
-
-      // 반짝이 효과
-      for (let i = 0; i < 30; i++) {
-        const sparkle = document.createElement('div');
-        sparkle.classList.add('sparkle');
-        sparkle.style.left = Math.random() * window.innerWidth + 'px';
-        sparkle.style.top = '-10px';
-        sparkle.style.animationDelay = Math.random() + 's';
-        document.body.appendChild(sparkle);
-        setTimeout(() => sparkle.remove(), 1500);
-      }
+      displayTodayCard(card);
     })
     .catch(error => {
       console.error("오늘의 카드 로딩 실패:", error);
     });
 }
+     function displayTodayCard(card) {
+  const cardList = document.getElementById("cardList");
+  const meaningBox = document.getElementById("meaningBox");
 
-   
+  const img = document.createElement("img");
+  img.src = card.img;
+  img.alt = card.name;
+  img.className = "card";
+
+  img.onload = () => {
+    img.classList.add("today-card");
+  };
+
+  cardList.innerHTML = "";
+  cardList.appendChild(img);
+
+  meaningBox.innerHTML = `
+    <p style="font-weight: bold; font-size: 16px; color: #d36bff;">오늘의 카드입니다 💖</p>
+    <strong>${card.name}</strong><br>${card.meaning}
+  `;
+
+  // 반짝이 효과
+  for (let i = 0; i < 30; i++) {
+    const sparkle = document.createElement('div');
+    sparkle.classList.add('sparkle');
+    sparkle.style.left = Math.random() * window.innerWidth + 'px';
+    sparkle.style.top = '-10px';
+    sparkle.style.animationDelay = Math.random() + 's';
+    document.body.appendChild(sparkle);
+    setTimeout(() => sparkle.remove(), 1500);
+  }
+}
+
 </script>
