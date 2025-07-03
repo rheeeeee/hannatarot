@@ -2,7 +2,15 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Hanna's Tarot</title>
+
+  <meta property="og:title" content="한나의 타로카드 해석 사이트">
+  <meta property="og:description" content="타로카드를 클릭하면 따뜻한 해석이 나와요 ✨">
+  <meta property="og:image" content="https://rheeeeee.github.io/hannatarot/images/banner.jpg">
+  <meta property="og:url" content="https://rheeeeee.github.io/hannatarot/">
+  <meta name="twitter:card" content="summary_large_image">
+  </head>
   <style>
     body {
       font-family: sans-serif;
@@ -56,6 +64,30 @@
     }
     .controls button:hover {
       background-color: #c995f5;
+
+      @media (max-width: 600px) {
+  .card {
+    width: 80px;
+  }
+
+  #meaningBox {
+    width: 90%;
+    padding: 20px;
+    font-size: 14px;
+  }
+
+  .controls button {
+    padding: 8px 12px;
+    font-size: 14px;
+  }
+
+  h1 {
+    font-size: 20px;
+  }
+
+  body {
+    padding: 20px;
+}
     }
   </style>
 </head>
